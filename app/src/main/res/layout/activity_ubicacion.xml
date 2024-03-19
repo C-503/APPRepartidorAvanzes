@@ -59,9 +59,33 @@ ubicación. "
         app:layout_constraintVertical_bias="0.829" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
+
         style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="125dp" />
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        android:background="@drawable/edit_text_shape"
+        app:endIconDrawable="@drawable/arrow3"
+        app:endIconMinSize="70dp"
+        app:endIconTint="@color/letras"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8">
+
+        <AutoCompleteTextView
+            android:id="@+id/ListaOfUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/edit_text_shape"
+            android:fontFamily="@font/stricken_brush2"
+            android:inputType="none"
+            android:text="Seleccionar"
+            android:textColor="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
