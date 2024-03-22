@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.apprepartidor" />
+                  <option name="mobileSdkAppId" value="1:207123066809:android:315bd88924aecffdab1068" />
+                  <option name="projectId" value="day-express-2c811" />
+                  <option name="projectNumber" value="207123066809" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
