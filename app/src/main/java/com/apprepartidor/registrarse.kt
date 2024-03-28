@@ -1,6 +1,8 @@
 package com.apprepartidor
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
@@ -9,21 +11,37 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.apprepartidor.databinding.ActivityRegistrarseBinding
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
+import com.facebook.FacebookSdk;
 
+@Suppress("DEPRECATION")
 class registrarse : AppCompatActivity() {
+    private val GOOGLE_SING_IN = 100
+    private val callbackManager = CallbackManager.Factory.create()
     private lateinit var auth: FirebaseAuth
     private val binding : ActivityRegistrarseBinding by lazy {
         ActivityRegistrarseBinding.inflate(layoutInflater)
     }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
         enableEdgeToEdge()
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainLayout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
@@ -36,8 +54,30 @@ class registrarse : AppCompatActivity() {
             startActivity(intent)
         }
 
+
         setup()
+        session()
+
     }
+    override fun onStart() {
+        super.onStart()
+
+    }
+
+    @SuppressLint("WrongViewCast")
+    private fun session(){
+        val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val email = prefs.getString("email", null)
+        val provider = prefs.getString("provider", null)
+
+        if(email != null && provider != null){
+
+            showHome(email, ProviderType.valueOf(provider))
+        }
+
+    }
+
+
     private fun setup(){
 
         title = "Autenticacion"
@@ -54,6 +94,7 @@ class registrarse : AppCompatActivity() {
                         passwordText.text.toString()).addOnCompleteListener {
                         if(it.isSuccessful){
                             showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+
                         }else{
                             showAlert()
                         }
@@ -61,9 +102,49 @@ class registrarse : AppCompatActivity() {
 
 
             }
+        }
+        val googlebtn = findViewById<TextView>(R.id.buttonG)
+        googlebtn.setOnClickListener {
+            val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("207123066809-lf8emgknefeb1b8ncanccrrs7kdddo43.apps.googleusercontent.com")
+                .requestEmail()
+                .build()
+
+            val googleClient = GoogleSignIn.getClient(this, googleConf)
+            googleClient.signOut()
+            startActivityForResult(googleClient.signInIntent, GOOGLE_SING_IN)
 
 
+        }
+        val facebookbtn = findViewById<TextView>(R.id.buttonF)
+        facebookbtn.setOnClickListener{
 
+            LoginManager.getInstance().logInWithReadPermissions(this, listOf("email"))
+            LoginManager.getInstance().registerCallback(callbackManager,
+                object : FacebookCallback<LoginResult> {
+
+                    override fun onSuccess(result: LoginResult) {
+                        result?.let {
+                            val token = it.accessToken
+                            val credential = FacebookAuthProvider.getCredential(token.token)
+                            FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    showHome(it.result?.user?.email ?: "", ProviderType.FACEBOOK)
+                                } else {
+                                    showAlert()
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onCancel() {
+
+                    }
+
+                    override fun onError(error: FacebookException) {
+                        showAlert()
+                    }
+                })
 
         }
     }
@@ -79,12 +160,36 @@ class registrarse : AppCompatActivity() {
 
     private fun showHome(email: String, provider: ProviderType){
 
-        val intent = Intent(this, login::class.java).apply {
+        val intent = Intent(this, menu::class.java).apply {
             putExtra("email", email)
             putExtra("provider", provider.name)
 
         }
         startActivity(intent)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        callbackManager.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == GOOGLE_SING_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+
+                if (account != null) {
+
+                    val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+                    FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            showHome(account.email ?: "", ProviderType.GOOGLE)
+                        } else {
+                            showAlert()
+                        }
+                    }
+                }
+            }catch (e: ApiException){
+                showAlert()
+            }
+        }
     }
 
 
