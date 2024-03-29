@@ -160,7 +160,7 @@ class registrarse : AppCompatActivity() {
 
     private fun showHome(email: String, provider: ProviderType){
 
-        val intent = Intent(this, menu::class.java).apply {
+        val intent = Intent(this, principal::class.java).apply {
             putExtra("email", email)
             putExtra("provider", provider.name)
 

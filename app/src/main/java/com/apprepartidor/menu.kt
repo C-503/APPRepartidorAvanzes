@@ -1,33 +1,58 @@
 package com.apprepartidor
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.apprepartidor.databinding.ActivityHistorialEntregasBinding
+import com.apprepartidor.databinding.ActivityMenuBinding
 import com.facebook.login.LoginManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.FirebaseAuth
-import com.facebook.FacebookSdk;
+
 
 enum class ProviderType{
     BASIC,
     GOOGLE,
     FACEBOOK
 }
-
 @Suppress("DEPRECATION")
 class menu : AppCompatActivity() {
+    private lateinit var binding: ActivityMenuBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMenuBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_menu)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainLayout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        binding.navegacion2.setOnItemSelectedListener {menuItem ->
+
+            when(menuItem.itemId){
+                R.id.ajust -> {
+                    startActivity(Intent(this, menu::class.java))
+                }
+                R.id.pedido -> {
+                    startActivity(Intent(this, principal::class.java))
+                }
+                R.id.histori -> {
+                    startActivity(Intent(this, historial_entregas::class.java))
+                }
+
+
+                else ->{
+
+                }
+            }
+            true
         }
         val analytics = FirebaseAnalytics.getInstance(this)
         val bundle = Bundle()
@@ -48,7 +73,7 @@ class menu : AppCompatActivity() {
         prefs.apply()
 
 
-    }
+}
     private fun setup(email: String, provider: String){
         title = "Inicio"
         val emailText = findViewById<TextView>(R.id.textView12)
@@ -70,6 +95,8 @@ class menu : AppCompatActivity() {
             }
             FirebaseAuth.getInstance().signOut()
             onBackPressed()
+            val intent = Intent(this, login::class.java)
+            startActivity(intent)
         }
 
     }

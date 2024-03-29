@@ -6,29 +6,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fondo"
-    tools:context=".principal">
-
+    tools:context=".historial_entregas">
 
     <TextView
         android:id="@+id/textView18"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-         android:layout_marginTop="36dp"
+        android:layout_marginTop="36dp"
         android:text="DAY Express Repartidor"
-        android:textStyle="bold"
         android:textColor="@color/letras"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recy"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintBottom_toTopOf="@id/navegacion"
+        app:layout_constraintBottom_toTopOf="@id/navegacion1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +35,7 @@
         />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navegacion"
+        android:id="@+id/navegacion1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -49,4 +47,5 @@
         app:menu="@menu/bottom_navigator">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
