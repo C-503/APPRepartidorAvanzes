@@ -39,10 +39,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/background1"
         app:itemTextColor="@color/letras"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_navigator">
 

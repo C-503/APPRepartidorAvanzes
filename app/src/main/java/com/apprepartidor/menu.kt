@@ -72,6 +72,13 @@ class menu : AppCompatActivity() {
         prefs.putString("provider", provider)
         prefs.apply()
 
+        val mapa = findViewById<TextView>(R.id.button5)
+
+        mapa.setOnClickListener{
+            val intent = Intent(this, pedidos_disponibles::class.java)
+            startActivity(intent)
+        }
+
 
 }
     private fun setup(email: String, provider: String){

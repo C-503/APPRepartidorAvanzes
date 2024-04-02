@@ -61,6 +61,16 @@
                 android:backgroundTint="@color/editText"
                 android:text="Cerrar Sesión"
                 android:textColor="@color/letras" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/editText"
+                android:text="Mapa"
+                android:textColor="@color/letras" />
         </LinearLayout>
     </FrameLayout>
 
