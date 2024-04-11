@@ -7,13 +7,31 @@
     android:background="@color/fondo"
     tools:context=".pedidos_disponibles">
 
-
-    <fragment
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        />
+        android:layout_height="match_parent">
+
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            />
+
+        <Button
+            android:id="@+id/btnCalculateRoute"
+            android:layout_marginBottom="40dp"
+            android:layout_marginEnd="95dp"
+            android:layout_marginStart="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Calcula tu Ruta"
+            android:textColor="@color/letras"
+            android:backgroundTint="@color/fondo"
+            />
+    </FrameLayout>
+
 
     <androidx.cardview.widget.CardView
         app:cardBackgroundColor="@color/fondo"

@@ -3,13 +3,10 @@ package com.apprepartidor
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
-import android.widget.SearchView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,9 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -28,27 +23,37 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+
 
 
 class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     private lateinit var map : GoogleMap
+    private lateinit var btnCalculate : Button
     private lateinit var autocompleteFragment : AutocompleteSupportFragment
 
-
-
+    private var start : String = ""
+    private var end : String = ""
+    var poly : Polyline? = null
     companion object{
         const val REQUEST_CODE_LOCATION = 0
     }
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
 
 
         setContentView(R.layout.activity_pedidos_disponibles)
@@ -80,8 +85,35 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             insets
         }
 
+
+
+        btnCalculate = findViewById(R.id.btnCalculateRoute)
+        btnCalculate.setOnClickListener {
+            start = ""
+            end = ""
+            poly?.remove()
+            poly = null
+            map.clear()
+            Toast.makeText(this, "Selecciona punto de origen y final", Toast.LENGTH_SHORT).show()
+            if(::map.isInitialized){
+                map.setOnMapClickListener {
+
+                    if(start.isEmpty()){
+                        start = "${it.longitude},${it.latitude}"
+
+                    }else if(end.isEmpty()){
+                        end = "${it.longitude},${it.latitude}"
+                        addMarker(it)
+                        createRoute()
+                    }
+                }
+            }
+        }
         createFragment()
+
     }
+
+
     private fun zoomOnMap(latLng: LatLng){
         val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
         map.animateCamera(newLatLngZoom)
@@ -94,7 +126,7 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
+        this.map = googleMap
        // createMarker()
         enableLocation()
         map.setOnMyLocationButtonClickListener(this)
@@ -119,6 +151,39 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             marker.remove()
             false
         }
+    }
+
+    private fun createRoute(){
+        CoroutineScope(Dispatchers.IO).launch {
+            val call = getRetrofit().create(ApiServicios::class.java)
+                .getRoute("5b3ce3597851110001cf62489797bf016b11410eb2d4beec71206e7f", start, end)
+            if(call.isSuccessful){
+                drawRoute( call.body())
+
+            }else{
+                Log.i("aris", "ok")
+
+            }
+        }
+    }
+
+    private fun drawRoute(routeResponse: RouteResponse?) {
+        val polyLineOptions = PolylineOptions()
+        routeResponse?.features?.first()?.geometry?.coordinates?.forEach {
+            polyLineOptions.add(LatLng(it[1], it[0]))
+        }
+        runOnUiThread {
+             poly = map.addPolyline(polyLineOptions)
+        }
+
+    }
+
+    private fun getRetrofit(): Retrofit{
+        return Retrofit.Builder()
+            .baseUrl("https://api.openrouteservice.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
     }
 
     private fun addMarker(position : LatLng) : Marker {
@@ -217,4 +282,5 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     override fun onMyLocationClick(p0: Location) {
 
     }
+
 }
