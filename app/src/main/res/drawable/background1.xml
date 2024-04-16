@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+<<<<<<< HEAD
         <item>
 
             <shape android:shape="rectangle">
@@ -7,4 +8,13 @@
                 <corners android:radius="20sp"/>
             </shape>
         </item>
+=======
+    <item>
+
+        <shape android:shape="rectangle">
+            <solid android:color="#303030"/>
+            <corners android:radius="20sp"/>
+        </shape>
+    </item>
+>>>>>>> 1aa77dbffe6da0cab6a45cc381eab8bff8392a32
 </selector>

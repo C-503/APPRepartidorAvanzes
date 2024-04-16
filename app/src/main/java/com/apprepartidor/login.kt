@@ -133,17 +133,17 @@ class login : AppCompatActivity() {
               object : FacebookCallback<LoginResult> {
 
                   override fun onSuccess(result: LoginResult) {
-                        result?.let {
-                            val token = it.accessToken
-                            val credential = FacebookAuthProvider.getCredential(token.token)
-                            FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
-                                if (it.isSuccessful) {
-                                    showHome(it.result?.user?.email ?: "", ProviderType.FACEBOOK)
-                                } else {
-                                    showAlert()
-                                }
-                            }
-                        }
+                      result?.let {
+                          val token = it.accessToken
+                          val credential = FacebookAuthProvider.getCredential(token.token)
+                          FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                              if (it.isSuccessful) {
+                                  showHome(it.result?.user?.email ?: "", ProviderType.FACEBOOK)
+                              } else {
+                                  showAlert()
+                              }
+                          }
+                      }
                   }
 
                   override fun onCancel() {
@@ -169,7 +169,7 @@ class login : AppCompatActivity() {
 
     private fun showHome(email: String, provider: ProviderType){
 
-        val intent = Intent(this, menu::class.java).apply {
+        val intent = Intent(this, principal::class.java).apply {
            putExtra("email", email)
            putExtra("provider", provider.name)
 
@@ -179,7 +179,8 @@ class login : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-       callbackManager.onActivityResult(requestCode, resultCode, data)
+
+        callbackManager.onActivityResult(requestCode, resultCode, data)
 
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SING_IN) {
