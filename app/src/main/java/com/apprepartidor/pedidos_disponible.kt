@@ -2,11 +2,13 @@ package com.apprepartidor
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -35,10 +37,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
-
-
-class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+class pedidos_disponible : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
     private lateinit var map : GoogleMap
     private lateinit var btnCalculate : Button
@@ -54,17 +53,14 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-
-        setContentView(R.layout.activity_pedidos_disponibles)
-
+        setContentView(R.layout.activity_pedidos_disponible)
         Places.initialize(applicationContext,getString(R.string.google_maps_key))
-        autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
+        autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment_pedido)
                 as AutocompleteSupportFragment
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG))
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener{
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onError(p0: Status) {
-               Toast.makeText(this@pedidos_disponibles, "Error en el buscador", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@pedidos_disponible, "Error en el buscador", Toast.LENGTH_SHORT).show()
             }
 
             override fun onPlaceSelected(place: Place) {
@@ -84,9 +80,6 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-
-
         btnCalculate = findViewById(R.id.btnCalculateRoute)
         btnCalculate.setOnClickListener {
             start = ""
@@ -111,9 +104,13 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         }
         createFragment()
 
+        val btn = findViewById<ImageView>(R.id.imageView4)
+        btn.setOnClickListener {
+            val intent = Intent(this, menu::class.java)
+            startActivity(intent)
+        }
+
     }
-
-
     private fun zoomOnMap(latLng: LatLng){
         val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
         map.animateCamera(newLatLngZoom)
@@ -127,16 +124,16 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
 
     override fun onMapReady(googleMap: GoogleMap) {
         this.map = googleMap
-       // createMarker()
+        // createMarker()
         enableLocation()
         map.setOnMyLocationButtonClickListener(this)
 
-            // add marker
-       // addMarker(LatLng(13.123,12.123))
-            // marcador draggable
-       // addDraggableMarker(LatLng(12.456, 14.765))
-            //marcador custom
-       // addCustomMarker(R.drawable.flag, LatLng(13.999, 12.456))
+        // add marker
+        // addMarker(LatLng(13.123,12.123))
+        // marcador draggable
+        // addDraggableMarker(LatLng(12.456, 14.765))
+        //marcador custom
+        // addCustomMarker(R.drawable.flag, LatLng(13.999, 12.456))
 
         map.setOnMapClickListener {
             map.clear()
@@ -173,12 +170,12 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
             polyLineOptions.add(LatLng(it[1], it[0]))
         }
         runOnUiThread {
-             poly = map.addPolyline(polyLineOptions)
+            poly = map.addPolyline(polyLineOptions)
         }
 
     }
 
-    private fun getRetrofit(): Retrofit{
+    private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.openrouteservice.org/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -188,7 +185,8 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
 
     private fun addMarker(position : LatLng) : Marker {
         // simple marcador
-       val marker =  map.addMarker(MarkerOptions()
+        val marker =  map.addMarker(
+            MarkerOptions()
             .position(position)
             .title("Marker")
         )
@@ -197,7 +195,8 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     }
 
     private fun addDraggableMarker(position: LatLng){
-        map.addMarker(MarkerOptions()
+        map.addMarker(
+            MarkerOptions()
             .position(position)
             .title("Draggable Marker")
             .draggable(true)
@@ -205,7 +204,8 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
     }
 
     private fun addCustomMarker(icon : Int, position: LatLng){
-        map.addMarker(MarkerOptions()
+        map.addMarker(
+            MarkerOptions()
             .position(position)
             .title("Custom Marker")
             .icon(BitmapDescriptorFactory.fromResource(icon))
@@ -243,7 +243,9 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)){
             Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
         }else{
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_CODE_LOCATION)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+               REQUEST_CODE_LOCATION
+            )
         }
     }
 
@@ -254,7 +256,7 @@ class pedidos_disponibles : AppCompatActivity(), OnMapReadyCallback, GoogleMap.O
         grantResults: IntArray
     ) {
         when(requestCode){
-            REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+           REQUEST_CODE_LOCATION -> if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 map.isMyLocationEnabled = true
             }else{
                 Toast.makeText(this, "Para Activar la localizacion ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
