@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
@@ -79,6 +80,16 @@ class pedidos_disponible : AppCompatActivity(), OnMapReadyCallback, GoogleMap.On
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val btn1 = findViewById<Button>(R.id.button6)
+        val btn2 = findViewById<Button>(R.id.button7)
+        val btn3 = findViewById<Button>(R.id.button8)
+
+        btn3.setOnClickListener {
+            btn1.visibility = View.VISIBLE
+            btn2.visibility = View.VISIBLE
+            btn3.visibility = View.INVISIBLE
         }
         btnCalculate = findViewById(R.id.btnCalculateRoute)
         btnCalculate.setOnClickListener {
