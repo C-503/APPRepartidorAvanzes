@@ -91,6 +91,7 @@ class pedidos_disponible : AppCompatActivity(), OnMapReadyCallback, GoogleMap.On
             btn2.visibility = View.VISIBLE
             btn3.visibility = View.INVISIBLE
         }
+        
         btnCalculate = findViewById(R.id.btnCalculateRoute)
         btnCalculate.setOnClickListener {
             start = ""
